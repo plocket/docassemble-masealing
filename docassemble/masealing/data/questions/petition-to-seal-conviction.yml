@@ -1,0 +1,352 @@
+---
+include:
+  - docassemble.AssemblyLine:al_package.yml
+  - docassemble.MassAccess:massaccess.yml
+---
+metadata:
+  title: |
+    Ask to seal your conviction
+  short title: |
+    Seal a conviction
+---
+mandatory: True
+comment: |
+  This contains metadata that will not be overwritten if this YAML file is included in another
+  file. Each file gets its own key in the interview_metadata dictionary.
+  Most keys are not currently used at runtime, other than "allowed courts".
+code: |
+  interview_metadata
+  if not defined("interview_metadata['petitiontosealconviction']"):
+    interview_metadata.initializeObject("petitiontosealconviction")
+    interview_metadata["petitiontosealconviction"].update({
+      "al_weaver_version": "0.81",
+      "generated on": "2021-05-24",
+      "title": "Ask to seal your conviction",
+      "short title": "Seal your conviction",
+      "description": "TODO: Fill this in",
+      "original_form": "",
+      "allowed courts": [
+        "Boston Municipal Court",
+        "District Court",
+        "Juvenile Court",
+        "Superior Court",
+      ],
+      "categories": [
+      ],        
+      "logic block variable": "interview_order_petitiontosealconviction",
+      "attachment block variable": "petitiontosealconviction_attachment",
+      "typical role": "plaintiff",
+    })
+---
+code: |
+  interview_short_title = "Ask to seal your conviction"
+---
+code: |
+  al_form_type = 'other'
+---
+objects:
+  - parents: ALPeopleList.using(there_are_any=True)
+  - users: ALPeopleList.using(ask_number=True,target_number=1)
+  - spouses: ALPeopleList.using(ask_number=True,target_number=1)
+---
+sections:
+  - review_petitiontosealconviction: Review your answers
+---
+#################### Interview order #####################
+comment: |
+  Controls order and branching logic for questions specific to this form
+id: interview_order_petitiontosealconviction
+code: |
+  # Set the allowed courts for this interview
+  allowed_courts = interview_metadata["petitiontosealconviction"]["allowed courts"]
+  interview_label = 'petitiontosealconviction'
+  nav.set_section('review_petitiontosealconviction')
+  user_role = 'plaintiff'
+  a1_is_juvenile_yes
+  a2_is_misdemeanor_yes
+  a3_is_felony_yes
+  set_progress(14.29)
+  a4_is_decriminalized_yes
+  users.gather()
+  set_parts(subtitle=str(users))
+  set_progress(28.57)
+  users[0].birthdate
+  users[0].mailing_address.address
+  set_progress(57.14)
+  parents.gather()
+  spouses.gather()
+  set_progress(71.43)
+  user_name_previous
+  interview_order_petitiontosealconviction = True
+---
+###################### Main order ######################
+comment: |
+  This block includes the logic for standalone interviews.
+  Delete mandatory: True to include in another interview
+mandatory: True
+code: |
+  al_intro_screen
+  petitiontosealconviction_intro
+  interview_order_petitiontosealconviction
+  signature_date
+  # Save anonymized interview statistics (customize the saved data below)
+  store_variables_snapshot(data={'zip': users[0].address.zip})
+  petitiontosealconviction_preview_question
+  basic_questions_signature_flow
+  users[0].signature
+  petitiontosealconviction_download
+---
+comment: |
+  This question is used to introduce your interview. Please customize
+id: Ask_to_seal_your_conviction
+continue button field: petitiontosealconviction_intro
+question: |
+  Ask to seal your conviction
+subquestion: |
+  TODO: Fill this in
+---
+id: Juv placeholder
+question: |
+  Juv placeholder
+fields:
+  - "Were you a juvenile when you got convicted? (committed the crime?)": a1_is_juvenile_yes
+    datatype: yesno
+  - "I swear this is true on penalty of perjury": a1_juvenile_affidavit_yes
+    datatype: yesno
+---
+id: Mis
+question: |
+  Mis
+fields:
+  - "Was this conviction for a misdemeanor?": a2_is_misdemeanor_yes
+    datatype: yesno
+  - "I swear this is true on penalty of perjury": a2_misdemeanor_affidavit_yes
+    datatype: yesno
+---
+id: Felony
+question: |
+  Felony
+fields:
+  - "Was this conviction for a felony?": a3_is_felony_yes
+    datatype: yesno
+  - "I swear this is true on penalty of perjury": a3_felony_affidavit_yes
+    datatype: yesno
+---
+id: Dec
+question: |
+  Dec
+yesno: a4_is_decriminalized_yes
+---
+id: Other information about you
+question: |
+  Other information about you
+fields:
+  - "Your previous names": user_name_previous
+    maxlength: 78
+  - "Occupation": user_occupation
+    maxlength: 30
+  - "SSN": user_social_security
+    maxlength: 19
+  - "Where were you born?": user_birthplace
+    maxlength: 21
+---
+id: preview petitiontosealconviction
+question: |
+  Preview your form before you sign it
+subquestion: |
+  Here is a preview of the form you will sign on the next page.   
+  
+  ${ al_user_bundle.as_pdf(key='preview') }
+
+  Click the image to open it in a new tab. Click the "Make changes" button
+  to edit your answers.
+
+  ${ action_button_html(url_action('review_' + interview_label), label='Make changes', color='info') }
+  
+  Remember to come back to this window to continue and sign your form.
+continue button field: petitiontosealconviction_preview_question    
+---
+id: petitiontosealconviction review screen
+event: review_petitiontosealconviction
+question: |
+  Review your answers
+review:
+  - Edit: a1_is_juvenile_yes
+    button: |
+      **Were you a juvenile when you got convicted? (committed the crime?)**:
+      ${ word(yesno(a1_is_juvenile_yes)) }
+  - Edit: a2_is_misdemeanor_yes
+    button: |
+      **Was this conviction for a misdemeanor?**:
+      ${ word(yesno(a2_is_misdemeanor_yes)) }
+  - Edit: a3_is_felony_yes
+    button: |
+      **Was this conviction for a felony?**:
+      ${ word(yesno(a3_is_felony_yes)) }
+  - Edit: a4_is_decriminalized_yes
+    button: |
+      **Was this crime decriminalized?**:
+      ${ word(yesno(a4_is_decriminalized_yes)) }
+  - Edit: user_name_previous
+    button: |
+      **Your previous names**:
+      ${ user_name_previous }
+  - Edit: user_occupation
+    button: |
+      **Occupation**:
+      ${ user_occupation }
+  - Edit: user_social_security
+    button: |
+      **SSN**:
+      ${ user_social_security }
+  - Edit: user_birthplace
+    button: |
+      **Where were you born?**:
+      ${ user_birthplace }
+  - Edit: a1_juvenile_affidavit_yes
+    button: |
+      **I swear this is true on penalty of perjury**:
+      ${ word(yesno(a1_juvenile_affidavit_yes)) }
+  - Edit: a2_misdemeanor_affidavit_yes
+    button: |
+      **I swear this is true on penalty of perjury**:
+      ${ word(yesno(a2_misdemeanor_affidavit_yes)) }
+  - Edit: a3_felony_affidavit_yes
+    button: |
+      **I swear this is true on penalty of perjury**:
+      ${ word(yesno(a3_felony_affidavit_yes)) }
+  - Edit: users.revisit
+    button: |
+      **users**
+
+      % for item in users:
+        * ${ item }
+      % endfor
+  - Edit: parents.revisit
+    button: |
+      **parents**
+
+      % for item in parents:
+        * ${ item }
+      % endfor
+  - Edit: spouses.revisit
+    button: |
+      **spouses**
+
+      % for item in spouses:
+        * ${ item }
+      % endfor
+---
+continue button field: users.revisit
+question: |
+  Edit users
+subquestion: |
+  ${ users.table }
+---
+table: users.table
+rows: users
+columns:
+  - name: |
+      row_item.name.full() if defined("row_item.name.middle") else ""
+  - birthdate: |
+      row_item.birthdate if defined("row_item.birthdate") else ""
+  - mailing address: |
+      row_item.mailing_address.block() if defined("row_item.mailing_address.zip") else ""
+  - signature: |
+      row_item.signature if defined("row_item.signature") else ""
+edit:
+  - name.middle
+  - birthdate
+  - mailing_address.zip
+  - signature
+confirm: True
+---
+continue button field: parents.revisit
+question: |
+  Edit parents
+subquestion: |
+  ${ parents.table }
+
+  ${ parents.add_action() if len( parents ) < 2 else "" }
+---
+table: parents.table
+rows: parents
+columns:
+  - name: |
+      row_item.name.full() if defined("row_item.name.first") else ""
+edit:
+  - name.first
+confirm: True
+---
+continue button field: spouses.revisit
+question: |
+  Edit spouses
+subquestion: |
+  ${ spouses.table }
+---
+table: spouses.table
+rows: spouses
+columns:
+  - name: |
+      row_item.name.full() if defined("row_item.name.first") else ""
+edit:
+  - name.first
+confirm: True
+---
+id: download petitiontosealconviction
+event: petitiontosealconviction_download
+question: |
+  Your form is ready to download.
+subquestion: |
+  
+  Thank you ${users}. Your form is ready to download and deliver.
+
+  View, download and send your form below. Click the "Make changes" button to fix any mistakes.
+
+  ${ action_button_html(url_action('review_' + interview_label), label='Make changes', color='info') }
+
+  ${ al_user_bundle.download_list_html() }
+
+  ${ al_user_bundle.send_button_html() }
+  
+progress: 100
+---
+objects:
+  - petitiontosealconviction_attachment: ALDocument.using(title="Seal an MA Conviction", filename="petition-to-seal-conviction.pdf", enabled=True, has_addendum=False)
+---
+objects:
+  - al_user_bundle: ALDocumentBundle.using(elements=[petitiontosealconviction_attachment], filename="petition-to-seal-conviction.pdf", title="All forms to download for your records")
+  - al_court_bundle: ALDocumentBundle.using(elements=[petitiontosealconviction_attachment], filename="petition-to-seal-conviction.pdf", title="All forms to download for your records")
+---
+attachment:
+  variable name: petitiontosealconviction_attachment[i]
+  name: petitiontosealconviction_attachment
+  filename: petitiontosealconviction
+  skip undefined: True
+  pdf template file: petition-to-seal-conviction.pdf
+  fields:
+      - "user_name_last": ${ users[0].name.last }
+      - "user_name_first": ${ users[0].name.first }
+      - "user_name_middle": ${ users[0].name.middle }
+      - "user_birthdate": ${ users[0].birthdate.format() }
+      - "user_mail_address_line_one": ${ users[0].mailing_address.line_one() }
+      - "user_mail_address_city": ${ users[0].mailing_address.city }
+      - "user_mail_address_state": ${ users[0].mailing_address.state }
+      - "user_mail_address_zip": ${ users[0].mailing_address.zip }
+      - "parent1_name": ${ parents[0] }
+      - "parent2_name": ${ parents[1] }
+      - "spouse_name": ${ spouses[0] }
+      - "user_signature__1": ${ users[0].signature_if_final(i) }
+      - "user_signature__2": ${ users[0].signature_if_final(i) }
+      - "user_signature__3": ${ users[0].signature_if_final(i) }
+      - "a1_is_juvenile_yes": ${ a1_is_juvenile_yes }
+      - "a2_is_misdemeanor_yes": ${ a2_is_misdemeanor_yes }
+      - "a3_is_felony_yes": ${ a3_is_felony_yes }
+      - "a4_is_decriminalized_yes": ${ a4_is_decriminalized_yes }
+      - "user_name_previous": ${ user_name_previous }
+      - "user_occupation": ${ user_occupation }
+      - "user_social_security": ${ user_social_security }
+      - "user_birthplace": ${ user_birthplace }
+      - "a1_juvenile_affidavit_yes": ${ a1_juvenile_affidavit_yes }
+      - "a2_misdemeanor_affidavit_yes": ${ a2_misdemeanor_affidavit_yes }
+      - "a3_felony_affidavit_yes": ${ a3_felony_affidavit_yes }
