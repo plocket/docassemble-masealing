@@ -9,6 +9,9 @@ metadata:
   short title: |
     Seal a conviction
 ---
+# Adult sealing truth table: https://docs.google.com/spreadsheets/d/17A_kMekLeBqvFvGdoD9I92QnkAXEtcnJlGqneEaA7ck/edit#gid=0
+# Docs folder: https://drive.google.com/drive/u/0/folders/1bxGB_SNLP-jVa3W8F5xndLaFIaiJO8PH
+---
 mandatory: True
 comment: |
   This contains metadata that will not be overwritten if this YAML file is included in another
@@ -48,9 +51,27 @@ objects:
   - parents: ALPeopleList.using(there_are_any=True)
   - users: ALPeopleList.using(ask_number=True,target_number=1)
   - spouses: ALPeopleList.using(ask_number=True,target_number=1)
+  - cases: DAList.using(object_type=DAObject, there_are_any=True, complete_attribute="complete")
 ---
 sections:
   - review_petitiontosealconviction: Review your answers
+---
+###################### Main order ######################
+comment: |
+  This block includes the logic for standalone interviews.
+  Delete mandatory: True to include in another interview
+mandatory: True
+code: |
+  #al_intro_screen
+  #petitiontosealconviction_intro
+  interview_order_petitiontosealconviction
+  signature_date
+  # Save anonymized interview statistics (customize the saved data below)
+  store_variables_snapshot(data={'zip': users[0].address.zip})
+  petitiontosealconviction_preview_question
+  basic_questions_signature_flow
+  users[0].signature
+  petitiontosealconviction_download
 ---
 #################### Interview order #####################
 comment: |
@@ -62,39 +83,265 @@ code: |
   interview_label = 'petitiontosealconviction'
   nav.set_section('review_petitiontosealconviction')
   user_role = 'plaintiff'
-  a1_is_juvenile_yes
-  a2_is_misdemeanor_yes
-  a3_is_felony_yes
-  set_progress(14.29)
-  a4_is_decriminalized_yes
-  users.gather()
-  set_parts(subtitle=str(users))
-  set_progress(28.57)
-  users[0].birthdate
-  users[0].mailing_address.address
-  set_progress(57.14)
-  parents.gather()
-  spouses.gather()
-  set_progress(71.43)
-  user_name_previous
+  
+  # TODO: I'm not sure the below is correct. If they have cases that were non-convictions, they might be able to seal them.
+  # what about juv cases? We said can't have open cases at all. Does that stop from sealing dismissed cases?
+  #if has_open_cases or is_on_probation:
+  #  open_case_kickout
+  
+  # only if guilty do we need to ask unsealable
+  
+  ## FOR TESTING, skipping questions
+  ## These are the only values that should need to be
+  ## defined for each one of these situations
+  #cases[0].status = 'open'
+  #cases[0].docket_number = '0'
+  #
+  #cases[1].status = 'warrant'
+  #cases[1].docket_number = '1'
+  #
+  #cases[2].status = 'closed'
+  #cases[2].docket_number = '2'
+  #cases[2].disposition = 'pending'
+  #
+  #cases[3].status = 'closed'
+  #cases[3].docket_number = '3'
+  #cases[3].disposition = 'not guilty'
+  #cases[3].offense_type = 'misdemeanor'
+  #cases[3].clock_start_date = current_datetime() - date_interval(years=4)
+  #
+  #cases[4].status = 'closed'
+  #cases[4].docket_number = '4'
+  #cases[4].disposition = 'not guilty'
+  #cases[4].offense_type = 'misdemeanor'
+  #cases[4].clock_start_date = current_datetime() - date_interval(years=1)
+  #
+  #cases[5].status = 'closed'
+  #cases[5].docket_number = '5'
+  #cases[5].disposition = 'not guilty'
+  #cases[5].offense_type = 'felony'
+  #cases[5].clock_start_date = current_datetime() - date_interval(years=8)
+  #
+  #cases[6].status = 'closed'
+  #cases[6].docket_number = '6'
+  #cases[6].disposition = 'not guilty'
+  #cases[6].offense_type = 'felony'
+  #cases[6].clock_start_date = current_datetime() - date_interval(years=3)
+  #
+  #cases[7].status = 'closed'
+  #cases[7].docket_number = '7'
+  #cases[7].disposition = 'guilty'
+  #cases[7].offense_type = 'misdemeanor'
+  #cases[7].is_unsealable = True
+  #cases[7].clock_start_date = current_datetime() - date_interval(years=4)
+  #
+  #cases[8].status = 'closed'
+  #cases[8].docket_number = '8'
+  #cases[8].disposition = 'guilty'
+  #cases[8].offense_type = 'misdemeanor'
+  #cases[8].is_unsealable = False
+  #cases[8].is_sex_offense = True
+  #cases[8].clock_start_date = current_datetime() - date_interval(years=16)
+  #
+  #cases[9].status = 'closed'
+  #cases[9].docket_number = '9'
+  #cases[9].disposition = 'guilty'
+  #cases[9].offense_type = 'misdemeanor'
+  #cases[9].is_unsealable = False
+  #cases[9].is_sex_offense = False
+  #cases[9].clock_start_date = current_datetime() - date_interval(years=2)
+  #
+  #cases[10].status = 'closed'
+  #cases[10].docket_number = '10'
+  #cases[10].disposition = 'guilty'
+  #cases[10].offense_type = 'felony'
+  #cases[10].is_unsealable = False
+  #cases[10].is_sex_offense = False
+  #cases[10].clock_start_date = current_datetime() - date_interval(years=8)
+  #
+  #cases[11].status = 'closed'
+  #cases[11].docket_number = '11'
+  #cases[11].disposition = 'guilty'
+  #cases[11].offense_type = 'felony'
+  #cases[11].is_unsealable = False
+  #cases[11].is_sex_offense = False
+  #cases[11].clock_start_date = current_datetime() - date_interval(years=5)
+  ## ENDS TESTING SECTION
+  
+  cases.gather()
+  has_seen_results
+  
+  # Default flow to remove
+  #a1_is_juvenile_yes
+  #a2_is_misdemeanor_yes
+  #a3_is_felony_yes
+  #set_progress(14.29)
+  #a4_is_decriminalized_yes
+  
+  # Personal info questions
+  #users.gather()
+  #set_parts(subtitle=str(users))
+  #set_progress(28.57)
+  #users[0].birthdate
+  #users[0].mailing_address.address
+  #set_progress(57.14)
+  #parents.gather()
+  #spouses.gather()
+  #set_progress(71.43)
+  #user_name_previous
   interview_order_petitiontosealconviction = True
 ---
-###################### Main order ######################
-comment: |
-  This block includes the logic for standalone interviews.
-  Delete mandatory: True to include in another interview
-mandatory: True
+id: case loop
 code: |
-  al_intro_screen
-  petitiontosealconviction_intro
-  interview_order_petitiontosealconviction
-  signature_date
-  # Save anonymized interview statistics (customize the saved data below)
-  store_variables_snapshot(data={'zip': users[0].address.zip})
-  petitiontosealconviction_preview_question
-  basic_questions_signature_flow
-  users[0].signature
-  petitiontosealconviction_download
+  if cases[i].status == 'open' or cases[i].status == 'warrant':
+    cases[i].disposition = 'pending'
+  
+  if cases[i].disposition == 'pending' and cases[i].status == 'closed':
+    cases[i].status = 'open'
+  
+  if not cases[i].is_closed:
+    has_open_cases = True
+    cases[i].clock_start_date = current_datetime()
+    cases[i].complete = True
+  
+  # TODO: If open, shall we still tell them whether it
+  # will be sealable in future?
+  # Should we put them through those questions?
+  # Shall we ask them if they want to find out about
+  # their open cases?
+  if cases[i].disposition == 'guilty':
+    cases[i].offense_type
+    if not cases[i].is_unsealable:
+      # TODO: Add assessment of first time drug conviction. How to go about this?
+      cases[i].is_sex_offense
+  
+  # TODO: Deal with juvenile cases
+  cases[i].is_juvenile = False
+    
+  cases[i].complete = True
+---
+depends on:
+  - cases[i].status
+  - cases[i].disposition
+code: |
+  # A case can be non-closed in multiple ways. Including the
+  # user making a mistake - Someone may say its status is 'closed'
+  # and then that its disposition is 'pending'. Since this is a posibility,
+  # we need to deal with it and it's easier to deal with it here than by
+  # trying to explain it to the user.
+  status_is_closed = cases[i].status != 'open' and cases[i].status != 'warrant'
+  disposition_is_closed = cases[i].status == 'closed' and cases[i].disposition != 'pending'
+  cases[i].is_closed = status_is_closed and disposition_is_closed
+---
+#depends on: cases
+recalculate: True
+code: |
+  closed_cases = [ case for case in cases if case.is_closed ]
+---
+#depends on: cases
+recalculate: True
+code: |
+  convictions = [ case for case in closed_cases if case.disposition == 'guilty' ]
+---
+#depends on: cases
+recalculate: True
+code: |
+  juvenile_cases = [ case for case in closed_cases if case.is_juvenile is True ]
+---
+#depends on: cases
+recalculate: True
+code: |
+  unsealable_cases = [ case for case in closed_cases if case.disposition == 'guilty' and case.is_unsealable is True ]
+---
+#depends on: cases
+recalculate: True
+code: |
+  open_cases = [ case for case in cases if not case.is_closed ]
+---
+id: calculate sealibility
+#depends on: cases
+recalculate: True
+code: |
+  # Time-based sealing:
+  # When a case gets on a record, there's a countdown clock till it
+  # can be sealed by mail (sealing in court is different).
+  # If a case ends in a guilty conviction, it restarts the clock of all other
+  # guilty convictions.
+  
+  # Court hearing based sealing: Only possible for non-conviction and 1st time drug offense with no violations
+  
+  # conviction_clock_start: The clock start date for all guilty convictions
+  conviction_clock_start = as_datetime('01/01/1000')  # Earliest date
+  
+  # Get the global conviction clock start date (the most recent one)
+  for case in convictions:
+    # That means the date of disposition, incarceration, or cwof when then found guilty. (for sex offenses, the last date of the last 'event')
+    # https://docassemble.org/docs/functions.html#date_difference
+    # "if [start] comes before [end], [result] positive"
+    # "if [end] comes before [start], [result] negative"
+    diff = date_difference( starting=conviction_clock_start, ending=case.clock_start_date )
+    if diff.days > 0:
+      conviction_clock_start = case.clock_start_date
+  
+  # ==============
+  # Set the clock start date for all convictions to
+  # the date we found was the most recent date
+  for case in convictions:
+    # positive result > start date earlier 
+    diff = date_difference( starting=conviction_clock_start, ending=case.clock_start_date )
+    if diff.days > 0:
+      case.clock_start_date = conviction_clock_start
+      
+  # ==============
+  # Calculate individual case sealing disqualifications
+  for case in closed_cases:
+    # Not guilty and 1st drug poss. with no violation can seal in court
+    # Other cases can only seal by mail, no hearing
+    if case.disposition == 'guilty':  # but not 1st drug possession conviction
+      case.can_only_seal_by_mail = True
+    else:
+      case.can_only_seal_by_mail = False
+      
+    # Give an extra couple days since they have to mail it
+    # and then the office has to look at it
+    mail_interval = date_interval(years=7)
+    
+    # Misdemeanor and 1st drug poss. with no violation
+    if case.offense_type == 'misdemeanor':  # or 1st drug possession conviction
+      mail_interval = date_interval(years=3)
+      
+    # Sex offenses don't matter if they're felony or midemeanor
+    # TODO: Is sex offense always felony?
+    if case.disposition == 'guilty' and not case.is_unsealable and case.is_sex_offense:
+      mail_interval = date_interval(years=15)
+      
+    # Calculate when sealing by mail can happen (supposing it can)
+    mail_interval = mail_interval - date_interval(days=7)
+    case.seal_by_mail_date = case.clock_start_date + mail_interval
+    
+    # Determine if enough time has passed for sealing by mail
+    # positive result > start date earlier = sealing date is in the future
+    diff = date_difference( starting=current_datetime(), ending=case.seal_by_mail_date )
+    if diff.days > 0 :
+      case.mail_interval_has_passed = False
+    else:
+      case.mail_interval_has_passed = True
+  
+  # Make a few lists for restults page
+  ready_for_court = [case for case in closed_cases if case.can_only_seal_by_mail is False]
+  
+  ready_for_mail = [  # collect closed cases that can be sealed by mail now
+    case for case in closed_cases
+      if case.disposition != 'guilty' and case.mail_interval_has_passed is True
+  ]
+  
+  cases_can_seal_by_mail_in_future = [ case
+    for case in closed_cases  # only closed cases
+      # not guilty of unsealable offense
+      if ((case.disposition != 'guilty' or case.is_unsealable is False)
+        # and not sealable by mail currently
+        and case.mail_interval_has_passed is False)
+  ]
 ---
 comment: |
   This question is used to introduce your interview. Please customize
@@ -103,7 +350,306 @@ continue button field: petitiontosealconviction_intro
 question: |
   Ask to seal your conviction
 subquestion: |
-  TODO: Fill this in
+  You may find it hard to answer the questions in here without your CORI and Juvenile Record. You can get your CORI online or send a letter to get it in paper.
+
+  TODO: Add more
+---
+id: open cases
+question: |
+  Do you have any open cases?
+yesnomaybe: has_open_cases
+---
+id: probation
+question: |
+  Are you on probation?
+yesnomaybe: is_on_probation
+---
+id: open case kickout
+event: open_case_kickout
+question: |
+  Sorry, we cannot help you seal your convictions
+subquestion: |
+  If you have an open case or are on probation, you cannot seal any convictions.
+  
+  TODO: Add resources
+---
+id: is there another case?
+question: |
+  Is there another case?
+subquestion: |
+  You have already told us about cases with these docket numbers:
+  
+  % for case in cases.complete_elements():
+    * ${ case.docket_number }
+  % endfor
+  
+yesno: cases.there_is_another
+---
+id: case status and id
+question: |
+  The ${ ordinal(i) } case
+subquestion: |
+  % if cases.number_gathered() > 0:
+  You have already told us about cases with these docket numbers:
+  
+  % for case in cases.complete_elements():
+    * ${ case.docket_number }
+  % endfor
+  % endif
+
+  Description of how to read the CORI or Juvenile Record with an image. Maybe have image on the help page.
+  
+  In some reports, a case is called an 'offense'.
+
+  When you look at a case, remember that some of the information for it might be on the page before or the page after.
+  
+  Can docket numbers have 'I's in them as well as '1's?
+fields:
+  - note: Look for the words "Docket Number:". What is printed to the right of that?
+  - no label: cases[i].docket_number
+  - note: Look for the words "Case Status:". What is printed to the right of that?
+  - no label: cases[i].status
+    datatype: radio
+    choices:
+      - Open: open
+      - Closed: closed
+      - Warrant: warrant
+      - Other: other
+  - Special case status: cases[i].custom_status
+    show if:
+      variable: cases[i].status
+      is: other
+---
+# TODO: Where would the CWOF finding date be?
+id: case disposition
+question: |
+  Disposition of the ${ ordinal(i) } case
+subquestion: |
+  The docket number of this case is ${ cases[i].docket_number }
+  
+  Description of how to read the CORI with an image. Maybe have image on the help page.
+
+  When you look at a case, remember that some of the information for it might be on the page before or the page after.
+fields:
+  - note: Look for the words "Disposition Type:". What is printed to the right of that? If the text does not match exactly, give it your best guess.
+  - no label: cases[i].disposition
+    datatype: radio
+    choices:
+      - Pending: pending
+      - Not guilty: not_guilty
+      - Guilty: guilty
+      - CWOF or Continuance without a finding: cwof
+      - Non conviction: non_conviction
+      - Dismissed: dismissed
+      - Nolle prosequi or NP: nolle_prosequi
+      - Other: other
+  - Copy the disposition you see for that case: cases[i].custom_disposition
+    show if:
+      variable: cases[i].disposition
+      is: other
+      
+  # Guilty and incarcerated dates
+  - note: Look for the word "Incarcerated:". What is printed to the right of that?
+    show if:
+      variable: cases[i].disposition
+      is: guilty
+  - no label: cases[i].was_incarcerated
+    show if:
+      variable: cases[i].disposition
+      is: guilty
+    datatype: radio
+    choices:
+      - N/A: False
+      - Yes: True
+  - note: Look for words similar to "Incar. Release Date:". What date is printed to the right of that?
+    show if:
+      variable: cases[i].was_incarcerated
+      is: True
+  - no label: cases[i].clock_start_date
+    datatype: date
+    show if:
+      variable: cases[i].was_incarcerated
+      is: True
+  
+  # Not guilty or not incarcerated
+  - note: Look for the words "Disposition Date:". What is printed to the right of that?
+    js show if: |
+      (val('cases[i].disposition') !== null && val('cases[i].disposition') !== 'pending' && val('cases[i].disposition') !== 'guilty') || val('cases[i].was_incarcerated') === false
+  - no label: cases[i].disposition_date_type
+    datatype: radio
+    js show if: |
+      (val('cases[i].disposition') !== null && val('cases[i].disposition') !== 'pending' && val('cases[i].disposition') !== 'guilty') || val('cases[i].was_incarcerated') === false
+    choices:
+      - A date is printed there: date
+      - UNKNOWN: unknown
+  - Disposition date: cases[i].clock_start_date
+    datatype: date
+    show if:
+      variable: cases[i].disposition_date_type
+      is: date
+  - Do you see the words "Court Disposition:" in the record of this case?: cases[i].court_disposition_present
+    datatype: yesnoradio
+    # TODO: Do not ask this if the case is a non-conviction? Date doesn't matter as much?
+    show if:
+      variable: cases[i].disposition_date_type
+      is: unknown
+  - What is the **date** printed to the right of "Court Disposition:"?: cases[i].clock_start_date
+    datatype: date
+    show if:
+      variable: cases[i].court_disposition_present
+      is: True
+  - note: Look above the case to the "Appearance Date:" (add pic). What is that date? Aprox how do we calculate something using that if there's no other date?
+    show if:
+      variable: cases[i].court_disposition_present
+      is: False
+  - no label: cases[i].clock_start_date
+    datatype: date
+    show if:
+      variable: cases[i].court_disposition_present
+      is: False
+---
+# TODO: We might not ask for a detailed description. It may
+# not be in-scope, or necessary, to get this completely right.
+id: case offense info
+question: |
+  Description of the ${ ordinal(i) } case
+subquestion: |
+  The docket number of this case is ${ cases[i].docket_number }
+  
+  Description of how to read the CORI with an image. Maybe have image on the help page.
+
+  When you look at a case, remember that some of the information for it might be on the page before or the page after.
+fields:
+  - note: Look for the words "Offense Type:". What is printed to the right of that?
+  - no label: cases[i].offense_type
+    datatype: radio
+    choices:
+      - Misdemeanor: misdemeanor
+      - Felony: felony
+      - Other: other
+  - Copy the description you see for that case: cases[i].custom_offense_type
+    show if:
+      variable: cases[i].offense_type
+      is: other
+  #- note: Look for the words "Offense Literal:". What is printed to the right of that?
+  #- no label: cases[i].offense_literal
+  #- note: Look for the words "Offense Description:". What is printed to the right of that?
+  #- no label: cases[i].offense_description
+---
+# How to identify drug conviction? Drug names?
+# How to identify non-sealable crimes?
+---
+# Only if convicted
+id: unsealable
+question: |
+  Unsealable crimes
+subquestion: |
+  Some crimes can never be sealed. If you were convicted on a crime on this list, the judge will not seal it.
+  
+  The docket number of this case is ${ cases[i].docket_number }
+  
+  Look for the words "Offense Literal:" and "Offense Description:". Does it look like those words match an item on this list?
+  
+  - Bribing an elected official
+  - Escape from jail
+  - Perjury
+  - Intimidating a witness
+  - Intimidating a  juror
+  - Resisting arrest
+  - TODO: Publiic Justice Crimes - what are they?
+  - TODO: Certain firearms, state ethics, conflicts of interest law exceptions - what are they?
+yesno: cases[i].is_unsealable
+---
+id: sex offense
+question: |
+  More about this case
+subquestion: |
+  The docket number of this case is ${ cases[i].docket_number }
+  
+  We know this section can be difficult. This section helps the program know if this was a sex offense. The program needs this information to be able to figure out what you can do with this case.
+  
+  The descriptions next to the words "Offense Literal:" and "Offense Description:" might help you answer.
+fields:
+  - Did the court make you register on the sex offense registry because of your conviction in this case?: cases[i].is_sex_offense
+    datatype: yesnoradio
+  - What other question can we ask?: wat
+    required: False
+  - What was the date of the last event in the case?: cases[i].clock_start_date
+    datatype: date
+    show if: cases[i].is_sex_offense
+  #- Did the court convict you of harming someone sexually?: cases[i].is_sex_offense
+  #- Does the text contain the word 'sex' or 'indecent'?: may_be_sexual
+  #  datatype: yesnoradio
+  #- Were you convicted of prostitution?: is_prostituation
+  #- Were you convicted of buying sex?: bought_prostitute
+  #- Was this a child?: child_prostitution
+  #  show if: bought_prostitute
+  #- Were you convicted of sharing information about someone else's assault or battery case?: confidentiality
+  #- Does the text contain the letters 'A&B' or 'Assault' or 'Battery'?: cases[i].is_sex_offense
+  #  datatype: yesnoradio
+  #  enable if: may_be_sexual
+  #- SEX OFFENDER, ENGAGE IN ICE CREAM TRUCK VENDING?: is_this_sexual_offense
+  #- TRAFFICKING OF PERSON FOR SEXUAL SERVITUDE OR FORCED SERVICES: is_this
+  #- PRISON GUARD HAVE SEX RELATIONS W/PRISONER: is_this
+  #- PROSTITUTION/UNLAW SEX,ABDUCT PERSON FOR: is_this
+---
+# non-convictions in MVP
+event: non_convictions_kickout
+question: |
+  You need a different form
+subquestion: |
+  TODO: Add that form to this interview.
+---
+# TODO: cases in other states. Does that include stuff like parking tickets?
+---
+id: result
+question: |
+  Description of result
+subquestion: |
+  These results are based on your answers to the questions.
+  
+  % if len(ready_for_court) > 0:
+  You might be able to seal these cases in court now:
+  
+  % for case in ready_for_court:
+  * ${ case.docket_number }
+  % endfor
+  % endif
+  
+  % if len(ready_for_mail) > 0:
+  You might be able to seal these cases by mail now:
+  
+  % for case in ready_for_mail:
+  * ${ case.docket_number }
+  % endfor
+  % endif
+  
+  TODO: How to explain the buffer time of a week that we give?
+  
+  % if len(open_cases) > 0:
+  You might be able to seal these cases depending on what happens with them when they're closed:
+  
+  % for case in open_cases:
+  * ${ case.docket_number }
+  % endfor
+  % endif
+  
+  % if len(cases_can_seal_by_mail_in_future) > 0:
+  You might be able to seal these cases by mail in the future:
+  
+  % for case in cases_can_seal_by_mail_in_future:
+  * ${ case.docket_number }: try sealing after ${ case.seal_by_mail_date }
+  % endfor
+  % endif
+  
+  % if len(unsealable_cases) > 0:
+  If the laws stay the same, you probably can never seal these cases:
+  
+  % for case in unsealable_cases:
+  * ${ case.docket_number }
+  % endfor
+  % endif
+continue button field: has_seen_results
 ---
 id: Juv placeholder
 question: |
