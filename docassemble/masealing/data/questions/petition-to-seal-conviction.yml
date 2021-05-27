@@ -91,82 +91,93 @@ code: |
   
   # only if guilty do we need to ask unsealable
   
-  ## FOR TESTING, skipping questions
-  ## These are the only values that should need to be
-  ## defined for each one of these situations
-  #cases[0].status = 'open'
-  #cases[0].docket_number = '0'
-  #
-  #cases[1].status = 'warrant'
-  #cases[1].docket_number = '1'
-  #
-  #cases[2].status = 'closed'
-  #cases[2].docket_number = '2'
-  #cases[2].disposition = 'pending'
-  #
-  #cases[3].status = 'closed'
-  #cases[3].docket_number = '3'
-  #cases[3].disposition = 'not guilty'
-  #cases[3].offense_type = 'misdemeanor'
-  #cases[3].clock_start_date = current_datetime() - date_interval(years=4)
-  #
-  #cases[4].status = 'closed'
-  #cases[4].docket_number = '4'
-  #cases[4].disposition = 'not guilty'
-  #cases[4].offense_type = 'misdemeanor'
-  #cases[4].clock_start_date = current_datetime() - date_interval(years=1)
-  #
-  #cases[5].status = 'closed'
-  #cases[5].docket_number = '5'
-  #cases[5].disposition = 'not guilty'
-  #cases[5].offense_type = 'felony'
-  #cases[5].clock_start_date = current_datetime() - date_interval(years=8)
-  #
-  #cases[6].status = 'closed'
-  #cases[6].docket_number = '6'
-  #cases[6].disposition = 'not guilty'
-  #cases[6].offense_type = 'felony'
-  #cases[6].clock_start_date = current_datetime() - date_interval(years=3)
-  #
-  #cases[7].status = 'closed'
-  #cases[7].docket_number = '7'
-  #cases[7].disposition = 'guilty'
-  #cases[7].offense_type = 'misdemeanor'
-  #cases[7].is_unsealable = True
-  #cases[7].clock_start_date = current_datetime() - date_interval(years=4)
-  #
-  #cases[8].status = 'closed'
-  #cases[8].docket_number = '8'
-  #cases[8].disposition = 'guilty'
-  #cases[8].offense_type = 'misdemeanor'
-  #cases[8].is_unsealable = False
-  #cases[8].is_sex_offense = True
-  #cases[8].clock_start_date = current_datetime() - date_interval(years=16)
-  #
-  #cases[9].status = 'closed'
-  #cases[9].docket_number = '9'
-  #cases[9].disposition = 'guilty'
-  #cases[9].offense_type = 'misdemeanor'
-  #cases[9].is_unsealable = False
-  #cases[9].is_sex_offense = False
-  #cases[9].clock_start_date = current_datetime() - date_interval(years=2)
-  #
-  #cases[10].status = 'closed'
-  #cases[10].docket_number = '10'
-  #cases[10].disposition = 'guilty'
-  #cases[10].offense_type = 'felony'
-  #cases[10].is_unsealable = False
-  #cases[10].is_sex_offense = False
-  #cases[10].clock_start_date = current_datetime() - date_interval(years=8)
-  #
-  #cases[11].status = 'closed'
-  #cases[11].docket_number = '11'
-  #cases[11].disposition = 'guilty'
-  #cases[11].offense_type = 'felony'
-  #cases[11].is_unsealable = False
-  #cases[11].is_sex_offense = False
-  #cases[11].clock_start_date = current_datetime() - date_interval(years=5)
-  ## ENDS TESTING SECTION
+  # FOR TESTING, skipping questions
+  # These are the only values that should need to be
+  # defined for each one of these situations
+  cases[0].status = 'open'
+  cases[0].docket_number = '0'
+  
+  cases[1].status = 'warrant'
+  cases[1].docket_number = '1'
+  
+  cases[2].status = 'closed'
+  cases[2].docket_number = '2'
+  cases[2].disposition = 'pending'
+  
+  cases[3].status = 'closed'
+  cases[3].docket_number = '3'
+  cases[3].disposition = 'not guilty'
+  cases[3].offense_type = 'misdemeanor'
+  cases[3].clock_start_date = current_datetime() - date_interval(years=4)
+  
+  cases[4].status = 'closed'
+  cases[4].docket_number = '4'
+  cases[4].disposition = 'not guilty'
+  cases[4].offense_type = 'misdemeanor'
+  cases[4].clock_start_date = current_datetime() - date_interval(years=1)
+  
+  cases[5].status = 'closed'
+  cases[5].docket_number = '5'
+  cases[5].disposition = 'not guilty'
+  cases[5].offense_type = 'felony'
+  cases[5].clock_start_date = current_datetime() - date_interval(years=8)
+  
+  cases[6].status = 'closed'
+  cases[6].docket_number = '6'
+  cases[6].disposition = 'not guilty'
+  cases[6].offense_type = 'felony'
+  cases[6].clock_start_date = current_datetime() - date_interval(years=3)
+  
+  cases[7].status = 'closed'
+  cases[7].docket_number = '7'
+  cases[7].disposition = 'guilty'
+  cases[7].offense_type = 'misdemeanor'
+  cases[7].is_unsealable = True
+  cases[7].clock_start_date = current_datetime() - date_interval(years=4)
+  
+  cases[8].status = 'closed'
+  cases[8].docket_number = '8'
+  cases[8].disposition = 'guilty'
+  cases[8].offense_type = 'misdemeanor'
+  cases[8].is_unsealable = False
+  cases[8].is_sex_offense = True
+  cases[8].clock_start_date = current_datetime() - date_interval(years=16)
+  
+  cases[9].status = 'closed'
+  cases[9].docket_number = '9'
+  cases[9].disposition = 'guilty'
+  cases[9].offense_type = 'misdemeanor'
+  cases[9].is_unsealable = False
+  cases[9].is_sex_offense = False
+  cases[9].clock_start_date = current_datetime() - date_interval(years=2)
+  
+  cases[10].status = 'closed'
+  cases[10].docket_number = '10'
+  cases[10].disposition = 'guilty'
+  cases[10].offense_type = 'felony'
+  cases[10].is_unsealable = False
+  cases[10].is_sex_offense = False
+  cases[10].clock_start_date = current_datetime() - date_interval(years=8)
+  
+  cases[11].status = 'closed'
+  cases[11].docket_number = '11'
+  cases[11].disposition = 'guilty'
+  cases[11].offense_type = 'felony'
+  cases[11].is_unsealable = False
+  cases[11].is_sex_offense = False
+  cases[11].clock_start_date = current_datetime() - date_interval(years=5)
+  
+  # Results should be:
+  # In court: 3, 4, 5, 6
+  # By mail: 3, 5
+  # Open: 0, 1, 2
+  # Future by mail:
+  #   4: try sealing after May 20, 2023
+  #   6: try sealing after May 20, 2025
+  #   9: try sealing after May 20, 2022
+  #   11: try sealing after May 20, 2023
+  # Unsealable: 7
+  # ENDS TESTING SECTION
   
   cases.gather()
   has_seen_results
@@ -190,6 +201,9 @@ code: |
   #set_progress(71.43)
   #user_name_previous
   interview_order_petitiontosealconviction = True
+---
+# TODO: (dev) We may need to add a category for cases we can't
+# calculate. Not enough info, etc.
 ---
 id: case loop
 code: |
@@ -258,8 +272,15 @@ recalculate: True
 code: |
   open_cases = [ case for case in cases if not case.is_closed ]
 ---
-id: calculate sealibility
-#depends on: cases
+# TODO: (devs) Should we use proper attribute names for
+# various case dates and calculate `.clock_start_date` separately?
+# Cons: Will mean making another block that we will have to maintain.
+# Pros: If laws change in the future, this code won't have to
+# be re-written because we'll already have the data we need.
+# 
+# I think we're leaning towards proper attribute names.
+---
+id: global conviction clock reset
 recalculate: True
 code: |
   # Time-based sealing:
@@ -271,7 +292,7 @@ code: |
   # Court hearing based sealing: Only possible for non-conviction and 1st time drug offense with no violations
   
   # conviction_clock_start: The clock start date for all guilty convictions
-  conviction_clock_start = as_datetime('01/01/1000')  # Earliest date
+  temp_start = as_datetime('01/01/1000')  # Earliest date
   
   # Get the global conviction clock start date (the most recent one)
   for case in convictions:
@@ -279,62 +300,83 @@ code: |
     # https://docassemble.org/docs/functions.html#date_difference
     # "if [start] comes before [end], [result] positive"
     # "if [end] comes before [start], [result] negative"
-    diff = date_difference( starting=conviction_clock_start, ending=case.clock_start_date )
+    diff = date_difference( starting=temp_start, ending=case.clock_start_date )
     if diff.days > 0:
-      conviction_clock_start = case.clock_start_date
+      temp_start = case.clock_start_date
   
-  # ==============
-  # Set the clock start date for all convictions to
-  # the date we found was the most recent date
-  for case in convictions:
-    # positive result > start date earlier 
-    diff = date_difference( starting=conviction_clock_start, ending=case.clock_start_date )
-    if diff.days > 0:
-      case.clock_start_date = conviction_clock_start
-      
-  # ==============
-  # Calculate individual case sealing disqualifications
-  for case in closed_cases:
-    # Not guilty and 1st drug poss. with no violation can seal in court
-    # Other cases can only seal by mail, no hearing
-    if case.disposition == 'guilty':  # but not 1st drug possession conviction
-      case.can_only_seal_by_mail = True
-    else:
-      case.can_only_seal_by_mail = False
-      
-    # Give an extra couple days since they have to mail it
-    # and then the office has to look at it
-    mail_interval = date_interval(years=7)
-    
-    # Misdemeanor and 1st drug poss. with no violation
-    if case.offense_type == 'misdemeanor':  # or 1st drug possession conviction
-      mail_interval = date_interval(years=3)
-      
-    # Sex offenses don't matter if they're felony or midemeanor
-    # TODO: Is sex offense always felony?
-    if case.disposition == 'guilty' and not case.is_unsealable and case.is_sex_offense:
-      mail_interval = date_interval(years=15)
-      
-    # Calculate when sealing by mail can happen (supposing it can)
-    mail_interval = mail_interval - date_interval(days=7)
-    case.seal_by_mail_date = case.clock_start_date + mail_interval
-    
-    # Determine if enough time has passed for sealing by mail
-    # positive result > start date earlier = sealing date is in the future
-    diff = date_difference( starting=current_datetime(), ending=case.seal_by_mail_date )
-    if diff.days > 0 :
-      case.mail_interval_has_passed = False
-    else:
-      case.mail_interval_has_passed = True
+  global_conviction_clock_start = temp_start
+---
+id: clock start for convictions
+# Dev architecture note:
+# This is a bit fragile because of all the checks we need to
+# do to make sure this only happens to the right cases without
+# triggering extra cases. Unfortunately, da can't find these
+# if they're in a regular loop. Might be better handled in a
+# class method.
+recalculate: True
+code: |
+  # Set the clock start date for a conviction to that of the most
+  # recent conviction
+  if case[i].is_closed and case[i].disposition == 'guilty':
+    case[i].clock_start_date = global_conviction_clock_start
+---
+id: can only seal by mail
+recalculate: True
+code: |
+  # Not guilty and 1st drug poss. with no violation can seal in court
+  # Other cases can only seal by mail, no hearing
+  if cases[i].disposition == 'guilty':  # but not 1st drug possession conviction
+    cases[i].can_only_seal_by_mail = True
+  else:
+    cases[i].can_only_seal_by_mail = False
+---
+id: how long till mailing will be an option?
+recalculate: True
+code: |
+  # 3, 7, or 15 years have to pass in non-guilty cases
+  # until the petitioner can use mail to request to seal.
+  # In docs, this is called 'time based'/'time-based'.
+  # Leave guilt out of this for now. For now,
+  # it's more simple if we calculate this for everything.
   
-  # Make a few lists for restults page
+  # Give an extra couple days since they have to mail it
+  # and then the office has to look at it
+  mail_interval = date_interval(years=7)
+
+  # Misdemeanor and 1st drug poss. with no violation
+  if cases[i].offense_type == 'misdemeanor':  # or 1st drug possession conviction
+    mail_interval = date_interval(years=3)
+
+  # Sex offenses don't matter if they're felony or midemeanor
+  # TODO: Is sex offense always felony?
+  if cases[i].disposition == 'guilty' and not cases[i].is_unsealable and cases[i].is_sex_offense:
+    mail_interval = date_interval(years=15)
+
+  # Calculate when sealing by mail can happen (supposing it can)
+  mail_interval = mail_interval - date_interval(days=7)
+  cases[i].seal_by_mail_date = cases[i].clock_start_date + mail_interval
+
+  # Determine if enough time has passed for sealing by mail
+  # positive result > start date earlier = sealing date is in the future
+  diff = date_difference( starting=current_datetime(), ending=cases[i].seal_by_mail_date )
+  if diff.days > 0 :
+    cases[i].mail_interval_has_passed = False
+  else:
+    cases[i].mail_interval_has_passed = True
+---
+recalculate: True
+code: |
   ready_for_court = [case for case in closed_cases if case.can_only_seal_by_mail is False]
-  
+---
+recalculate: True
+code: |
   ready_for_mail = [  # collect closed cases that can be sealed by mail now
     case for case in closed_cases
       if case.disposition != 'guilty' and case.mail_interval_has_passed is True
   ]
-  
+---
+recalculate: True
+code: |
   cases_can_seal_by_mail_in_future = [ case
     for case in closed_cases  # only closed cases
       # not guilty of unsealable offense
